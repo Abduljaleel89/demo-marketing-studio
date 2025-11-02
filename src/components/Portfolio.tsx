@@ -34,9 +34,10 @@ const Portfolio: React.FC = () => {
     <section id="portfolio" className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-6 text-center">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
           className="text-3xl sm:text-4xl font-bold mb-12"
         >
           Our Portfolio
@@ -47,13 +48,17 @@ const Portfolio: React.FC = () => {
             <motion.div
               key={index}
               className="group bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition overflow-hidden cursor-pointer relative"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
-              viewport={{ once: true }}
+              transition={{
+                duration: 0.8,
+                delay: index * 0.2,
+                ease: "easeOut",
+              }}
+              viewport={{ once: true, amount: 0.3 }}
               whileHover={{ scale: 1.03 }}
             >
-              {/* Image Wrapper with shine effect */}
+              {/* Image Wrapper */}
               <motion.div
                 className="relative overflow-hidden"
                 whileHover={{
