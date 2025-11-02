@@ -1,26 +1,30 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+import BrandBoost from "../assets/portfolio/brandboost.jpg";
+import NovaTech from "../assets/portfolio/novatech.jpg";
+import VisionFlow from "../assets/portfolio/visionflow.jpg";
+
 const projects = [
   {
     name: "BrandBoost",
     description:
       "A bold rebrand and website revamp for a fast-growing startup.",
-    image: "https://via.placeholder.com/400x250?text=BrandBoost",
+    image: BrandBoost,
     link: "#",
   },
   {
     name: "NovaTech Launch",
     description:
       "Conversion-focused landing page for an innovative product launch.",
-    image: "https://via.placeholder.com/400x250?text=NovaTech+Launch",
+    image: NovaTech,
     link: "#",
   },
   {
     name: "VisionFlow",
     description:
       "Interactive dashboard for real-time analytics and user engagement.",
-    image: "https://via.placeholder.com/400x250?text=VisionFlow",
+    image: VisionFlow,
     link: "#",
   },
 ];
