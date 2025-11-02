@@ -46,17 +46,35 @@ const Portfolio: React.FC = () => {
           {projects.map((project, index) => (
             <motion.div
               key={index}
+              className="group bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition overflow-hidden cursor-pointer"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
               viewport={{ once: true }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
+              whileHover={{ scale: 1.03 }}
             >
-              <img
-                src={project.image}
-                alt={project.name}
-                className="w-full h-48 object-cover"
-              />
+              {/* Image Wrapper with hover motion */}
+              <motion.div
+                className="overflow-hidden relative"
+                whileHover={{
+                  scale: 1.08,
+                  rotateZ: 1,
+                }}
+                transition={{ duration: 0.6 }}
+              >
+                <motion.img
+                  src={project.image}
+                  alt={project.name}
+                  className="w-full h-48 object-cover group-hover:opacity-90 transition"
+                  whileHover={{
+                    scale: 1.15,
+                    rotateZ: 1.5,
+                  }}
+                  transition={{ duration: 0.5 }}
+                />
+              </motion.div>
+
+              {/* Text Content */}
               <div className="p-6 text-left">
                 <h3 className="text-xl font-semibold text-brand mb-2">
                   {project.name}
