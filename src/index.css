@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[data-theme='light'] {
+  --bg: #ffffff;
+  --text: #111;
+}
+
+[data-theme='dark'] {
+  --bg: #0e0e0e;
+  --text: #f3f3f3;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s, color 0.4s;
+}
+
+section {
+  padding: 5rem 1rem;
+}
+
+h1, h2, h3, h4, h5 {
+  @apply font-bold;
+}
