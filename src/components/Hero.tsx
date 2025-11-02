@@ -8,11 +8,26 @@ const Hero: React.FC = () => {
       id="hero"
       className="min-h-[90vh] flex flex-col justify-center items-center text-center bg-gradient-brand text-white relative overflow-hidden"
     >
+      {/* Glowing Aura */}
+      <motion.div
+        className="absolute w-60 h-60 rounded-full blur-3xl opacity-40 bg-gradient-to-tr from-pink-400 to-cyan-400"
+        initial={{ scale: 0.8, opacity: 0.3 }}
+        animate={{
+          scale: [0.8, 1.05, 0.8],
+          opacity: [0.3, 0.45, 0.3],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      ></motion.div>
+
       {/* Animated Logo */}
       <motion.img
         src={Logo}
         alt="Demo Marketing Studio Logo"
-        className="w-28 h-28 mb-8"
+        className="w-28 h-28 mb-8 relative z-10"
         initial={{ rotate: 0, scale: 0.9, opacity: 0 }}
         animate={{
           rotate: [0, 360],
@@ -31,7 +46,7 @@ const Hero: React.FC = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="max-w-2xl px-6"
+        className="max-w-2xl px-6 z-10"
       >
         <h2 className="text-4xl sm:text-5xl font-bold mb-4">
           Empowering brands to shine online
