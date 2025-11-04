@@ -1,26 +1,30 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class", '[data-theme="dark"]'],
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}"
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    "bg-indigo-600", "from-indigo-600", "to-cyan-500", "text-indigo-600",
+    "flex", "grid", "hidden", "block", "inline-flex", "items-center", "justify-between",
+    "px-3", "px-4", "px-5", "py-2", "py-3", "gap-3", "gap-6",
+    "rounded-lg", "rounded-md", "rounded-xl", "rounded-2xl",
+    "shadow", "shadow-lg", "shadow-sm",
+    "container-max", "hero-accent", "card", "form-control"
+  ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        brand: {
-          light: "#a78bfa",
-          DEFAULT: "#7c3aed",
-          dark: "#5b21b6"
-        }
+        brand: "#6366f1",
       },
       backgroundImage: {
-        "gradient-brand": "linear-gradient(to right, #7c3aed, #06b6d4)"
+        "gradient-brand": "linear-gradient(to right, #6366f1, #06b6d4)",
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui"]
-      }
-    }
+        sans: ["Inter", "ui-sans-serif", "system-ui"],
+      },
+    },
   },
-  plugins: []
+  plugins: [require('@tailwindcss/forms')],
 };

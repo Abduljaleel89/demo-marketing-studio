@@ -1,53 +1,73 @@
 import React from "react";
 import { motion } from "framer-motion";
+import strategyImg from "../assets/features/feature-strategy.jpg";
+import designImg from "../assets/features/feature-design.jpg";
+import marketingImg from "../assets/features/feature-marketing.jpg";
 
-const features = [
-  {
-    title: "Creative Design",
-    description:
-      "Modern, responsive designs tailored to your brand’s unique identity.",
-  },
-  {
-    title: "Marketing Strategy",
-    description:
-      "Data-driven digital strategies that amplify your brand’s online reach.",
-  },
-  {
-    title: "Web Development",
-    description:
-      "Clean, scalable code with lightning-fast performance across all devices.",
-  },
-];
+const Features: React.FC<{
+  openArticle: (section: "features", key?: string) => void;
+}> = ({ openArticle }) => {
+  const features = [
+    {
+      key: "strategy",
+      title: "Brand Strategy",
+      description:
+        "We build data-driven marketing strategies that align with your business goals and strengthen your digital presence.",
+      image: strategyImg,
+    },
+    {
+      key: "design",
+      title: "Creative Design",
+      description:
+        "Our creative team blends innovation with design excellence to create visually stunning experiences that inspire trust.",
+      image: designImg,
+    },
+    {
+      key: "marketing",
+      title: "Digital Marketing",
+      description:
+        "From social media to paid campaigns, we deliver measurable results through targeted, performance-driven marketing solutions.",
+      image: marketingImg,
+    },
+  ];
 
-const Features: React.FC = () => {
   return (
-    <section id="features" className="py-20 bg-gray-50 dark:bg-gray-900">
+    <section id="features" className="py-24 bg-gray-900 text-white">
       <div className="max-w-6xl mx-auto px-6 text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl font-bold mb-12"
+          className="text-4xl font-bold mb-16"
         >
-          Our Features
+          Our Key Features
         </motion.h2>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
+        <div className="grid md:grid-cols-3 gap-10">
+          {features.map((item, index) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
+              key={item.key}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
-              viewport={{ once: true }}
-              className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition"
+              transition={{ delay: index * 0.2 }}
+              className="bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-transform duration-300"
             >
-              <h3 className="text-xl font-semibold mb-3 text-brand">
-                {feature.title}
+              <img
+                src={item.image}
+                alt={item.title}
+                className="rounded-xl mb-4 w-full h-48 object-cover"
+              />
+              <h3 className="text-xl font-semibold text-brand mb-2">
+                {item.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                {feature.description}
-              </p>
+              <p className="text-gray-300 text-sm mb-4">{item.description}</p>
+              <button
+  onClick={() => openArticle("features", item.key)}
+  className="text-indigo-400 hover:underline font-medium"
+>
+  Read More →
+</button>
+
             </motion.div>
           ))}
         </div>
