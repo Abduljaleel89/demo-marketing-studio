@@ -1,22 +1,20 @@
 import React from "react";
-import { motion } from "framer-motion";
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10 mt-16">
+    <footer className="bg-gray-900 text-gray-300 py-10">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <motion.h3
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-lg font-semibold text-white mb-2"
-        >
-          Demo Marketing Studio
-        </motion.h3>
-        <p className="text-sm text-gray-400 mb-4">
-          Elevating brands through creative innovation & digital strategy.
+        <h3 className="text-xl font-semibold mb-2">Let’s Build Something Great</h3>
+        <p className="mb-6 text-gray-400">
+          Ready to elevate your brand? Contact us today and start your growth journey.
         </p>
-        <p className="text-xs text-gray-500">
+        <a
+          href="#contact"
+          className="inline-block bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-8 rounded-full transition"
+        >
+          Get in Touch
+        </a>
+        <p className="text-gray-500 mt-8 text-sm">
           © {new Date().getFullYear()} Demo Marketing Studio. All rights reserved.
         </p>
       </div>

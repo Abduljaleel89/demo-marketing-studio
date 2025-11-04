@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// ✅ Configured specifically for your GitHub Pages deployment
+// ✅ Configured for your GitHub Pages repo
 export default defineConfig({
-  base: "/demo-marketing-studio/", // Required so assets load correctly on GitHub Pages
+  base: "/demo-marketing-studio/",
   plugins: [react()],
   build: {
     outDir: "dist",
@@ -13,3 +13,4 @@ export default defineConfig({
     port: 5173,
   },
 });
+
