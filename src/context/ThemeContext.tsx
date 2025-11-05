@@ -1,35 +1,55 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-type Theme = "light" | "dark";
-
-interface ThemeContextType {
-  theme: Theme;
+type ThemeContextType = {
+  theme: "light" | "dark";
   toggleTheme: () => void;
-}
+};
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: "light",
   toggleTheme: () => {},
 });
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>("light");
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return (localStorage.getItem("theme") as "light" | "dark") || "light";
+  });
 
+  // ✅ Apply Tailwind's dark mode class dynamically with smooth fade
   useEffect(() => {
-    const saved = localStorage.getItem("theme") as Theme | null;
-    if (saved) setTheme(saved);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    const root = window.document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+  const toggleTheme = () => setTheme((prev) => (prev === "dark" ? "light" : "dark"));
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={theme}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`transition-colors duration-500 ${
+            theme === "dark"
+              ? "bg-gray-950 text-white"
+              : "bg-white text-gray-900"
+          }`}
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
     </ThemeContext.Provider>
   );
 };

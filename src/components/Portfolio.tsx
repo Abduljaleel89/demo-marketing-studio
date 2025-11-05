@@ -1,37 +1,51 @@
 import React from "react";
+import { motion } from "framer-motion";
+
+// ✅ Import images directly
+import novatech from "/assets/portfolio/novatech.jpg";
+import brandboost from "/assets/portfolio/brandboost.jpg";
+import visionflow from "/assets/portfolio/visionflow.jpg";
+import adsphere from "/assets/portfolio/adsphere.jpg";
 
 const projects = [
-  {
-    name: "AdSphere",
-    summary: "Boosted brand visibility and lead conversions by 45% through data-driven rebranding.",
-    image: "/src/assets/portfolio/adsphere.jpg",
-  },
-  {
-    name: "BrandBoost",
-    summary: "Launched a high-impact digital campaign reaching over 2M targeted impressions.",
-    image: "/src/assets/portfolio/brandboost.jpg",
-  },
-  {
-    name: "VisionFlow",
-    summary: "Revitalized customer engagement with a sleek new digital identity and UX redesign.",
-    image: "/src/assets/portfolio/visionflow.jpg",
-  },
+  { name: "NovaTech", img: novatech },
+  { name: "BrandBoost", img: brandboost },
+  { name: "VisionFlow", img: visionflow },
+  { name: "AdSphere", img: adsphere },
 ];
 
 const Portfolio = () => {
   return (
-    <section id="portfolio" className="py-24 bg-white dark:bg-gray-950 px-6">
-      <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-12">Our Work</h2>
-        <div className="grid md:grid-cols-3 gap-10">
+    <section id="portfolio" className="py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-6 text-center">
+        <motion.h2
+          className="text-3xl font-bold mb-12 text-gray-900 dark:text-white"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          Featured Work
+        </motion.h2>
+
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {projects.map((p, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl shadow-lg hover:scale-105 transition">
-              <img src={p.image} alt={p.name} className="w-full h-64 object-cover" loading="lazy" />
-              <div className="p-6 text-left">
-                <h3 className="text-2xl font-semibold mb-2">{p.name}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{p.summary}</p>
-              </div>
-            </div>
+            <motion.div
+              key={i}
+              className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition bg-white dark:bg-gray-800"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+            >
+              <img
+                src={p.img}
+                alt={p.name}
+                className="w-full h-48 object-cover"
+                loading="lazy"
+              />
+              <h3 className="text-lg font-semibold mt-4 mb-2">{p.name}</h3>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -9,7 +9,7 @@ const Footer = () => {
           Ready to elevate your brand? Contact us today and start your growth journey.
         </p>
         <a
-          href="#contact"
+          href="#hero"
           className="inline-block bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-8 rounded-full transition"
         >
           Get in Touch
