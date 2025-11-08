@@ -1,198 +1,150 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { Sun, Moon, Menu, X } from "lucide-react";
+﻿import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Moon, Sun } from "lucide-react";
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const links = [
+  { id: "features", label: "Features" },
+  { id: "expertise", label: "Expertise" },
+  { id: "portfolio", label: "Portfolio" },
+  { id: "insights", label: "Insights" },
+  { id: "contact", label: "Contact" },
+];
+
+export default function Navbar() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState("");
   const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark"
+    document.documentElement.classList.contains("dark")
   );
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
+  const [navWidth, setNavWidth] = useState<number | null>(null);
+  const [navOffset, setNavOffset] = useState<number>(0);
 
-  // 🧭 Track scroll position for section highlight
   useEffect(() => {
-    const sections = ["hero", "features", "expertise", "portfolio", "footer"];
+    const nav = document.querySelector("nav");
+    if (nav) {
+      const rect = nav.getBoundingClientRect();
+      setNavWidth(rect.width);
+      setNavOffset(rect.left);
+    }
 
+    const handleResize = () => {
+      const nav = document.querySelector("nav");
+      if (nav) {
+        const rect = nav.getBoundingClientRect();
+        setNavWidth(rect.width);
+        setNavOffset(rect.left);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 60);
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScrollProgress(progress);
 
-      let currentSection = "hero";
-      sections.forEach((section) => {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop - 120;
-          const bottom = top + el.offsetHeight;
-          if (window.scrollY >= top && window.scrollY < bottom) {
-            currentSection = section;
-          }
+      const sections = links.map((l) => l.id);
+      let current = "";
+      for (const id of sections) {
+        const section = document.getElementById(id);
+        if (
+          section &&
+          section.offsetTop - 120 <= scrollTop &&
+          section.offsetTop + section.offsetHeight - 120 > scrollTop
+        ) {
+          current = id;
         }
-      });
-
-      setActiveSection(currentSection);
+      }
+      setActiveSection(current);
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 🌗 Handle theme mode
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+    if (darkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   }, [darkMode]);
 
-  // 🌈 Scroll progress bar animation
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const handleScrollTo = (id: string) => {
+    const section = document.getElementById(id);
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+  };
 
-  const navItems = [
-    { name: "Home", href: "#hero", id: "hero" },
-    { name: "Features", href: "#features", id: "features" },
-    { name: "Expertise", href: "#expertise", id: "expertise" },
-    { name: "Portfolio", href: "#portfolio", id: "portfolio" },
-    { name: "Contact", href: "#footer", id: "footer" },
-  ];
+  // compute exact pixel-based dot position relative to navbar
+  const dotPosition =
+    navWidth && navOffset !== null ? (navWidth * scrollProgress) / 100 + navOffset : 0;
 
   return (
     <>
-      {/* 🌈 Scroll Progress Indicator */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-[3px] origin-left bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 z-[10000]"
-        style={{ scaleX }}
-      />
-
-      {/* 🧭 Navbar */}
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-0 left-0 w-full z-[9999] backdrop-blur-2xl border-b transition-all duration-500 ${
-          isScrolled
-            ? "bg-white/80 dark:bg-gray-950/80 border-indigo-500/20 shadow-lg"
-            : "bg-gradient-to-r from-indigo-900/70 via-purple-800/70 to-blue-900/70 border-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <a
-            href="#hero"
-            className="text-xl md:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-blue-400 to-purple-500 hover:opacity-90 transition"
+      <nav className="fixed top-0 left-0 w-full z-[60] backdrop-blur-md bg-white/70 dark:bg-gray-900/70 shadow-sm border-b border-white/10 dark:border-gray-800/50">
+        <div className="max-w-6xl mx-auto flex justify-between items-center py-3 px-6 relative overflow-visible">
+          <motion.h1
+            className="font-bold text-lg md:text-xl text-indigo-700 dark:text-indigo-400 tracking-wide cursor-pointer"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
           >
             Demo Marketing Studio
-          </a>
+          </motion.h1>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <motion.a
-                key={item.id}
-                href={item.href}
-                className={`relative font-semibold text-sm tracking-wide transition-all duration-300 ${
-                  isScrolled
-                    ? "text-gray-800 dark:text-gray-100"
-                    : "text-gray-100"
-                } ${
-                  activeSection === item.id
-                    ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]"
+          <ul className="flex space-x-6 text-gray-800 dark:text-gray-200 font-medium">
+            {links.map((link) => (
+              <li
+                key={link.id}
+                onClick={() => handleScrollTo(link.id)}
+                className={`cursor-pointer hover:text-indigo-500 transition-colors ${
+                  activeSection === link.id
+                    ? "text-indigo-600 dark:text-indigo-400 font-semibold"
                     : ""
                 }`}
-                whileHover={{ scale: 1.08 }}
               >
-                {item.name}
-                <span
-                  className={`absolute left-0 -bottom-1 h-[2px] bg-gradient-to-r from-indigo-400 to-blue-400 transition-all duration-500 ${
-                    activeSection === item.id ? "w-full" : "w-0 hover:w-full"
-                  }`}
-                ></span>
-              </motion.a>
+                {link.label}
+              </li>
             ))}
+          </ul>
 
-            {/* Theme Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 shadow-md"
-              title="Toggle theme"
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5 text-yellow-300" />
-              ) : (
-                <Moon className="w-5 h-5 text-blue-100" />
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <div className="md:hidden flex items-center space-x-3">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md hover:scale-105 transition-transform"
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5 text-yellow-300" />
-              ) : (
-                <Moon className="w-5 h-5 text-blue-100" />
-              )}
-            </button>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 text-white hover:text-indigo-400 transition-all duration-300"
-            >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* 📱 Mobile Drawer */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.4 }}
-            className="fixed top-0 left-0 w-full h-screen bg-black/70 backdrop-blur-xl z-[9998] flex flex-col items-center justify-center space-y-8 md:hidden"
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="ml-6 p-2 rounded-full bg-indigo-600 text-white shadow hover:scale-110 transition-transform"
           >
-            {navItems.map((item) => (
-              <motion.a
-                key={item.id}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={`text-2xl font-semibold transition-all duration-300 ${
-                  activeSection === item.id
-                    ? "text-indigo-400 drop-shadow-[0_0_10px_rgba(99,102,241,0.7)]"
-                    : "text-gray-100"
-                } hover:text-indigo-400`}
-                whileHover={{ scale: 1.1 }}
-              >
-                {item.name}
-              </motion.a>
-            ))}
+            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
 
-            <div className="w-2/3 h-[2px] bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-60"></div>
+          {/* Progress Line */}
+          <motion.div
+            className="absolute bottom-0 left-0 h-[3px] bg-indigo-500 rounded-full"
+            style={{ width: `${scrollProgress}%` }}
+            transition={{ duration: 0.1 }}
+          />
+        </div>
+      </nav>
 
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="mt-6 text-gray-300 hover:text-indigo-400 transition-all duration-300"
-            >
-              Close
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Perfectly aligned dot — above navbar */}
+      <motion.div
+        className="fixed top-[6px] z-[70]"
+        style={{
+          left: `${dotPosition}px`,
+          transform: "translateX(-50%)",
+        }}
+      >
+        <motion.div
+          className="w-3.5 h-3.5 rounded-full bg-indigo-600 dark:bg-indigo-400 shadow-lg ring-2 ring-indigo-300/50"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.9, 1, 0.9],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.5,
+            ease: "easeInOut",
+          }}
+        />
+      </motion.div>
     </>
   );
-};
-
-export default Navbar;
+}

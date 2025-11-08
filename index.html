@@ -3,20 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Demo Marketing Studio</title>
+    <title>Demo Marketing Studio | Where Creativity Meets Data</title>
 
-    <!-- ✅ Correct relative path for favicon -->
+    <!-- ✅ Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180" />
 
-    <!-- ✅ Better metadata -->
-    <meta name="description" content="A creative marketing studio built with React, Vite, and Tailwind CSS." />
-    <meta name="theme-color" content="#ffffff" />
+    <!-- ✅ SEO -->
+    <meta name="description" content="A creative studio combining cinematic design with data-driven marketing." />
+    <meta name="keywords" content="marketing, creative studio, design, data-driven, branding, storytelling" />
+    <meta name="author" content="Demo Marketing Studio" />
+
+    <!-- ✅ Open Graph (LinkedIn/Facebook) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://abduljaleel89.github.io/demo-marketing-studio/" />
+    <meta property="og:title" content="Demo Marketing Studio | Where Creativity Meets Data" />
+    <meta property="og:description" content="A creative studio combining cinematic design with data-driven marketing." />
+    <meta property="og:image" content="./social-preview.png" />
+
+    <!-- ✅ Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Demo Marketing Studio | Where Creativity Meets Data" />
+    <meta name="twitter:description" content="A creative studio combining cinematic design with data-driven marketing." />
+    <meta name="twitter:image" content="./social-preview.png" />
+
+    <!-- ✅ Animated OG Background (for sharing) -->
+    <meta property="og:image:alt" content="Animated particle background with glowing studio title" />
+    <meta property="twitter:image:alt" content="Animated particle background with glowing studio title" />
+
+    <!-- ✅ Theme Color -->
+    <meta name="theme-color" content="#0a0f1f" />
+
+    <!-- ✅ Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="/assets/hero/hero.jpg" />
+
   </head>
 
-  <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300">
+  <body class="bg-gray-950 text-gray-100">
     <div id="root"></div>
 
-    <!-- ✅ Correct relative module reference -->
+    <!-- ✅ Vite Mount -->
     <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

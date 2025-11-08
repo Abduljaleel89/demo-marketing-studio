@@ -1,0 +1,325 @@
+﻿import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Particles from "react-tsparticles";
+import { Engine } from "tsparticles-engine";
+import { loadSlim } from "tsparticles-slim";
+
+const SplashScreen = ({ onGetStarted }: { onGetStarted: () => void }) => {
+  const [progress, setProgress] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [fadingOut, setFadingOut] = useState(false);
+  const [autoSkip, setAutoSkip] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15);
+
+  const particlesInit = async (engine: Engine) => {
+    await loadSlim(engine);
+  };
+
+  // Progress bar
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 100) {
+          clearInterval(interval);
+          setLoaded(true);
+          return 100;
+        }
+        return p + 2;
+      });
+    }, 60);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Disable scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
+  // Countdown
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [timeLeft]);
+
+  // Auto transition after 15s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!fadingOut) {
+        setAutoSkip(true);
+        handleGetStarted();
+      }
+    }, 15000);
+    return () => clearTimeout(timer);
+  }, [fadingOut]);
+
+  // ðŸŽ§ Cinematic Audio: Ambient hum + stereo panning + bass pulse
+  useEffect(() => {
+    let audioContext: AudioContext | null = null;
+    let humSource: AudioBufferSourceNode | null = null;
+    let humGain: GainNode | null = null;
+    let panNode: StereoPannerNode | null = null;
+    let humBuffer: AudioBuffer | null = null;
+    let heartbeatOsc: OscillatorNode | null = null;
+    let heartbeatGain: GainNode | null = null;
+    let panAngle = 0;
+    let panInterval: NodeJS.Timer;
+    let heartbeatInterval: NodeJS.Timer;
+
+    const initAudio = async () => {
+      if (!audioContext) audioContext = new AudioContext();
+
+      // Load ambient hum
+      const response = await fetch("/assets/sounds/ambient-hum.mp3");
+      const arrayBuffer = await response.arrayBuffer();
+      humBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // ðŸŽµ Setup ambient layer
+      humSource = audioContext.createBufferSource();
+      humGain = audioContext.createGain();
+      panNode = audioContext.createStereoPanner();
+
+      humSource.buffer = humBuffer;
+      humSource.loop = true;
+      humSource.connect(panNode).connect(humGain).connect(audioContext.destination);
+
+      humGain.gain.value = 0;
+      humSource.start(0);
+
+      // Fade in ambient
+      const fadeIn = setInterval(() => {
+        if (humGain && humGain.gain.value < 0.2) humGain.gain.value += 0.01;
+        else clearInterval(fadeIn);
+      }, 200);
+
+      // ðŸŽšï¸ Stereo pan leftâ†”right
+      panInterval = setInterval(() => {
+        if (panNode && audioContext) {
+          panAngle += 0.02;
+          const panValue = Math.sin(panAngle) * 0.7;
+          panNode.pan.setValueAtTime(panValue, audioContext.currentTime);
+        }
+      }, 60);
+
+      // â¤ï¸ Low-frequency heartbeat pulse
+      heartbeatOsc = audioContext.createOscillator();
+      heartbeatGain = audioContext.createGain();
+
+      heartbeatOsc.type = "sine";
+      heartbeatOsc.frequency.value = 60; // deep tone
+      heartbeatGain.gain.value = 0.0;
+
+      heartbeatOsc.connect(heartbeatGain).connect(audioContext.destination);
+      heartbeatOsc.start();
+
+      // Pulse rhythm every ~1.5s
+      heartbeatInterval = setInterval(() => {
+        if (!heartbeatGain) return;
+        const now = audioContext!.currentTime;
+        const g = heartbeatGain.gain;
+        g.cancelScheduledValues(now);
+        g.setValueAtTime(0.0, now);
+        g.linearRampToValueAtTime(0.08, now + 0.05);
+        g.linearRampToValueAtTime(0.0, now + 0.3);
+      }, 1500);
+    };
+
+    // Trigger after user interaction
+    const handleUserInteraction = async () => {
+      document.removeEventListener("click", handleUserInteraction);
+      try {
+        await initAudio();
+        console.log("ðŸŽ§ Ambient hum + heartbeat started.");
+      } catch (err) {
+        console.warn("âš ï¸ Audio initialization failed:", err);
+      }
+    };
+
+    document.addEventListener("click", handleUserInteraction);
+
+    return () => {
+      clearInterval(panInterval);
+      clearInterval(heartbeatInterval);
+      const fadeOut = setInterval(() => {
+        if (humGain && humGain.gain.value > 0) humGain.gain.value -= 0.01;
+        else {
+          clearInterval(fadeOut);
+          humSource?.stop();
+          heartbeatOsc?.stop();
+          audioContext?.close();
+        }
+      }, 200);
+    };
+  }, []);
+
+  const handleGetStarted = () => {
+    setFadingOut(true);
+    setTimeout(() => {
+      onGetStarted();
+    }, 1000);
+  };
+
+  const circleProgress = ((15 - timeLeft) / 15) * 360;
+
+  return (
+    <AnimatePresence>
+      {!fadingOut && (
+        <motion.div
+          key="splash"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, filter: "blur(10px)" }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          className="relative h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-700 via-purple-700 to-blue-800 text-white overflow-hidden"
+        >
+          {/* ðŸŒŒ Particles */}
+          <div className="absolute inset-0 pointer-events-none">
+            <Particles
+              id="tsparticles"
+              init={particlesInit}
+              options={{
+                background: { color: "transparent" },
+                fpsLimit: 60,
+                particles: {
+                  number: { value: 40, density: { enable: true, area: 800 } },
+                  color: { value: ["#ffffff", "#a5b4fc", "#c084fc"] },
+                  links: { enable: true, color: "#ffffff", distance: 120, opacity: 0.2 },
+                  move: { enable: true, speed: 1 },
+                  size: { value: { min: 1, max: 4 } },
+                  opacity: { value: 0.5 },
+                },
+              }}
+            />
+          </div>
+
+          {/* ðŸŽ¬ Logo + Glow Ring */}
+          <div className="relative mb-6">
+            <motion.img
+              src="/assets/hero/hero.jpg"
+              alt="Logo"
+              className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover relative z-10"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
+            />
+
+            <motion.svg
+              className="absolute inset-0 w-32 h-32 -top-2 -left-2 z-0"
+              viewBox="0 0 100 100"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            >
+              <defs>
+                <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#a78bfa" />
+                  <stop offset="100%" stopColor="#6366f1" />
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.2)" strokeWidth="6" fill="none" />
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="45"
+                stroke="url(#glowGradient)"
+                strokeWidth="6"
+                fill="none"
+                strokeDasharray="283"
+                strokeDashoffset={283 - (circleProgress / 360) * 283}
+                strokeLinecap="round"
+                transform="rotate(-90 50 50)"
+                animate={{
+                  strokeDashoffset: 283 - (circleProgress / 360) * 283,
+                  filter: [
+                    "drop-shadow(0 0 8px #a78bfa)",
+                    "drop-shadow(0 0 16px #c084fc)",
+                    "drop-shadow(0 0 8px #a78bfa)",
+                  ],
+                }}
+                transition={{
+                  ease: "linear",
+                  duration: 0.6,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                }}
+              />
+            </motion.svg>
+
+            {/* Countdown Number */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center text-lg font-bold text-white/80 z-20"
+              animate={{
+                scale: [1, 1.05, 1],
+                opacity: [0.9, 1, 0.9],
+                textShadow: [
+                  "0 0 8px #a78bfa",
+                  "0 0 16px #c084fc",
+                  "0 0 8px #a78bfa",
+                ],
+              }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              {timeLeft}s
+            </motion.div>
+          </div>
+
+          {/* Title */}
+          <motion.h1
+            className="text-4xl md:text-5xl font-extrabold mb-3 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            Demo Marketing Studio
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            className="text-lg text-gray-200 mb-10 text-center max-w-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            Where cinematic storytelling meets data-driven strategy.
+          </motion.p>
+
+          {/* Progress or Button */}
+          {!loaded ? (
+            <div className="relative z-10 w-64 h-2 bg-white/20 rounded-full overflow-hidden mb-6 shadow-inner">
+              <motion.div
+                className="h-full bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-400"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ ease: "easeInOut", duration: 0.2 }}
+              />
+            </div>
+          ) : (
+            <motion.button
+              onClick={handleGetStarted}
+              className="relative z-20 bg-white text-indigo-600 font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-indigo-400/50 transition-all duration-300 hover:scale-110 animate-pulse"
+              whileHover={{ scale: 1.1 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              {autoSkip ? "Loading Experience..." : "Get Started"}
+            </motion.button>
+          )}
+
+          {/* Footer */}
+          <motion.div
+            className="absolute bottom-10 text-sm text-white/60"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
+          >
+            Â© 2025 Demo Marketing Studio
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default SplashScreen;

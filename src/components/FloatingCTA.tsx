@@ -1,19 +1,16 @@
-import React from "react";
+﻿import React from "react";
 import { motion } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 
-const FloatingCTA = () => {
+export default function FloatingCTA() {
   return (
     <motion.a
-      href="#footer"
-      className="fixed bottom-8 right-8 z-50 bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:shadow-xl hover:bg-indigo-700 transition-all"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1 }}
-      whileHover={{ scale: 1.1 }}
+      href="#contact"
+      className="fixed bottom-10 right-8 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:shadow-indigo-500/40 hover:scale-110 transition-all z-[999]"
+      whileHover={{ scale: 1.15 }}
+      whileTap={{ scale: 0.95 }}
     >
-      ✉ Contact Us
+      <MessageCircle size={22} />
     </motion.a>
   );
-};
-
-export default FloatingCTA;
+}

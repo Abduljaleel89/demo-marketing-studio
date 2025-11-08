@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🔹 Smooth global transitions */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply transition-colors duration-500 bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans;
+}
+
+/* 🔹 Glassmorphism-style card */
+.glass-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 🔹 Section spacing & animation smoothing */
+section {
+  @apply py-24 px-6 transition-all duration-500;
+}
+
+/* 🔹 Buttons */
+button, a {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* 🔹 Text selections */
+::selection {
+  @apply bg-indigo-500 text-white;
+}
+
+/* 🔹 Scrollbar (modern minimal style) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.6);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}

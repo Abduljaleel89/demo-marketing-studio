@@ -1,0 +1,26 @@
+{
+  "name": "Demo Marketing Studio",
+  "short_name": "DMS",
+  "description": "Where creativity meets data to accelerate your brand’s growth.",
+  "start_url": "/demo-marketing-studio/",
+  "display": "standalone",
+  "background_color": "#0a0f1f",
+  "theme_color": "#0a0f1f",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

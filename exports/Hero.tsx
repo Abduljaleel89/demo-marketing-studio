@@ -1,0 +1,1 @@
+import heroImg from "/assets/hero/hero.jpg";

@@ -1,102 +1,155 @@
-import React, { useState, lazy, Suspense } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+﻿import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import SplashScreen from "./components/SplashScreen";
 import Navbar from "./components/Navbar";
-import { ThemeProvider } from "./context/ThemeContext";
+import Hero from "./components/Hero";
 import FloatingCTA from "./components/FloatingCTA";
+import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import Modal from "./components/Modal";
+import SplashScreen from "./components/SplashScreen";
+import { Volume2, VolumeX } from "lucide-react";
+import { useAmbientAudio } from "./hooks/useAmbientAudio";
 
-// ✅ Lazy load large sections
-const Hero = lazy(() => import("./components/Hero"));
-const Features = lazy(() => import("./components/Features"));
-const Expertise = lazy(() => import("./components/Expertise"));
-const Portfolio = lazy(() => import("./components/Portfolio"));
-const Insights = lazy(() => import("./components/Insights"));
-const Footer = lazy(() => import("./components/Footer"));
+const aiText = (topic: string) =>
+  Array(8)
+    .fill(
+      `${topic} — At Demo Marketing Studio we merge cinematic storytelling with strategy and data. Each article explores creative innovation, emotional design, and performance-driven marketing that helps brands connect authentically.`
+    )
+    .join("\n\n");
 
-const App = () => {
+const sections = [
+  {
+    id: "features",
+    title: "Our Features",
+    img: "/assets/features/feature-design.jpg",
+    topics: [
+      { name: "Creative Strategy", img: "/assets/features/feature-strategy.jpg", content: aiText("Creative Strategy") },
+      { name: "Marketing Design", img: "/assets/features/feature-marketing.jpg", content: aiText("Marketing Design") },
+      { name: "User Experience", img: "/assets/features/feature-design.jpg", content: aiText("User Experience") },
+    ],
+  },
+  {
+    id: "expertise",
+    title: "Our Expertise",
+    img: "/assets/expertise/expertise-content.jpg",
+    topics: [
+      { name: "Identity Design", img: "/assets/expertise/expertise-identity.jpg", content: aiText("Identity Design") },
+      { name: "Content Creation", img: "/assets/expertise/expertise-content.jpg", content: aiText("Content Creation") },
+      { name: "Data Analytics", img: "/assets/expertise/expertise-analytics.jpg", content: aiText("Data Analytics") },
+    ],
+  },
+  {
+    id: "portfolio",
+    title: "Our Portfolio",
+    img: "/assets/portfolio/brandboost.jpg",
+    topics: [
+      { name: "AdSphere", img: "/assets/portfolio/adsphere.jpg", content: aiText("AdSphere") },
+      { name: "BrandBoost", img: "/assets/portfolio/brandboost.jpg", content: aiText("BrandBoost") },
+      { name: "VisionFlow", img: "/assets/portfolio/visionflow.jpg", content: aiText("VisionFlow") },
+    ],
+  },
+  {
+    id: "insights",
+    title: "Latest Insights",
+    img: "/assets/portfolio/visionflow.jpg",
+    topics: [
+      { name: "The Future of Creative AI", img: "/assets/expertise/expertise-analytics.jpg", content: aiText("The Future of Creative AI") },
+      { name: "Designing for Data", img: "/assets/features/feature-marketing.jpg", content: aiText("Designing for Data") },
+      { name: "Marketing in Motion", img: "/assets/portfolio/adsphere.jpg", content: aiText("Marketing in Motion") },
+    ],
+  },
+];
+
+export default function App() {
   const [showMain, setShowMain] = useState(false);
+  const [modal, setModal] = useState<any>(null);
+  const [soundOn, setSoundOn] = useState(localStorage.getItem("soundOn") !== "false");
+
+  useAmbientAudio(soundOn);
+
+  useEffect(() => {
+    localStorage.setItem("soundOn", String(soundOn));
+  }, [soundOn]);
 
   return (
-    <HelmetProvider>
-      <ThemeProvider>
-        <Helmet>
-  <title>Demo Marketing Studio | Where Creativity Meets Data</title>
-  <meta
-    name="description"
-    content="Demo Marketing Studio — where creativity meets data to accelerate your brand’s growth."
-  />
-  <meta
-    name="keywords"
-    content="marketing, digital agency, creative strategy, data-driven growth, branding, design, analytics"
-  />
-  <meta name="author" content="Demo Marketing Studio" />
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 overflow-x-hidden">
+      <AnimatePresence mode="wait">
+        {!showMain ? (
+          <SplashScreen onGetStarted={() => setShowMain(true)} />
+        ) : (
+          <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+            <Navbar />
+            <Hero />
 
-  {/* ✅ OpenGraph Metadata for social sharing */}
-  <meta property="og:title" content="Demo Marketing Studio | Where Creativity Meets Data" />
-  <meta
-    property="og:description"
-    content="Empowering brands through creativity, strategy, and measurable results."
-  />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://abduljaleel89.github.io/demo-marketing-studio/" />
-  <meta property="og:image" content="https://abduljaleel89.github.io/demo-marketing-studio/github-banner.png" />
-  <meta property="og:image:width" content="1280" />
-  <meta property="og:image:height" content="640" />
+            <main className="pt-24 space-y-32 relative z-10">
+              {sections.map((section) => (
+                <motion.section
+                  key={section.id}
+                  id={section.id}
+                  className="max-w-6xl mx-auto px-6 text-center relative z-20"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: true }}
+                >
+                  <h2 className="text-3xl font-bold mb-6 text-indigo-600 dark:text-indigo-400">{section.title}</h2>
 
-  {/* ✅ Twitter Card Metadata */}
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Demo Marketing Studio" />
-  <meta
-    name="twitter:description"
-    content="Where Creativity Meets Data — Demo Marketing Studio delivers data-driven strategy and digital design."
-  />
-  <meta name="twitter:image" content="https://abduljaleel89.github.io/demo-marketing-studio/github-banner.png" />
+                  <img
+                    src={section.img}
+                    alt={section.title}
+                    className="rounded-2xl shadow-2xl mx-auto mb-10 w-full max-w-3xl object-cover"
+                  />
 
-  {/* ✅ Favicon & Canonical */}
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="canonical" href="https://abduljaleel89.github.io/demo-marketing-studio/" />
-</Helmet>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {section.topics.map((topic) => (
+                      <motion.div
+                        key={topic.name}
+                        onClick={() => setModal(topic)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="cursor-pointer bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-lg hover:shadow-indigo-500/20 transition-all z-30 pointer-events-auto"
+                      >
+                        <img
+                          src={topic.img}
+                          alt={topic.name}
+                          className="w-full h-48 object-cover rounded-xl mb-4"
+                        />
+                        <h3 className="text-xl font-semibold mb-2 text-indigo-600 dark:text-indigo-400">
+                          {topic.name}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm">Click to read more</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.section>
+              ))}
+            </main>
 
+            <Footer />
+            <FloatingCTA />
+            <ScrollToTop />
 
-        <AnimatePresence mode="wait">
-          {!showMain ? (
-            <motion.div
-              key="splash"
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-            >
-              <SplashScreen onGetStarted={() => setShowMain(true)} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="main"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-500"
-            >
-              <Navbar />
-              <Suspense fallback={<div className="p-12 text-center text-gray-400">Loading content...</div>}>
-                <main>
-                  <Hero />
-                  <Features />
-                  <Expertise />
-                  <Portfolio />
-                  <Insights />
-                  <Footer />
-                </main>
-              </Suspense>
-              <FloatingCTA />
-              <ScrollToTop />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </ThemeProvider>
-    </HelmetProvider>
+            <AnimatePresence>
+              {modal && (
+                <div className="fixed inset-0 z-[9999]">
+                  <Modal title={modal.name} onClose={() => setModal(null)}>
+                    {modal.content}
+                  </Modal>
+                </div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sound toggle */}
+      <motion.button
+        onClick={() => setSoundOn(!soundOn)}
+        className="fixed bottom-8 left-8 z-[10000] bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:scale-110 transition-transform"
+        whileHover={{ scale: 1.1 }}
+      >
+        {soundOn ? <Volume2 size={20} /> : <VolumeX size={20} />}
+      </motion.button>
+    </div>
   );
-};
-
-export default App;
+}

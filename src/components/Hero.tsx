@@ -1,77 +1,59 @@
 import React from "react";
 import { motion } from "framer-motion";
-import heroImg from "/assets/hero/hero.jpg";
 
-const Hero = () => {
+export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative h-screen flex items-center justify-center bg-gray-950 text-center overflow-hidden"
+      className="relative h-screen flex flex-col items-center justify-center overflow-hidden text-white text-center"
     >
-      {/* Background Image with Soft Overlay */}
-      <div className="absolute inset-0">
-        <img
-          src={heroImg}
-          alt="Marketing team working together"
-          className="w-full h-full object-cover brightness-75"
-          loading="lazy"
+      {/* Background Image (Fades from blur → crisp) */}
+      <div className="absolute inset-0 z-0">
+        <motion.img
+          src="/assets/hero/hero.jpg"
+          alt="Hero Background"
+          className="w-full h-full object-cover"
+          initial={{ opacity: 0, filter: "blur(12px) brightness(0.7)" }}
+          animate={{ opacity: 1, filter: "blur(0px) brightness(1)" }}
+          transition={{ duration: 2, ease: "easeOut" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/80"></div>
       </div>
 
-      {/* Content Section */}
-      <motion.div
-        className="relative z-10 px-6 max-w-3xl mx-auto text-white"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        {/* Heading */}
-        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">
-            Transform Your Brand Presence
-          </span>
-        </h1>
+      {/* Gradient Overlay placed BELOW text */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/70 via-purple-900/50 to-indigo-900/70 z-10 pointer-events-none"></div>
 
-        {/* Subtitle */}
-        <p className="text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
-          We help businesses connect with their audiences through impactful
-          storytelling, data-driven insights, and creative digital strategies.
+      {/* Hero Text Layer */}
+      <motion.div
+        className="relative z-20 px-4"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, delay: 0.4 }}
+      >
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-4 drop-shadow-2xl">
+          Demo Marketing Studio
+        </h1>
+        <p className="text-lg md:text-xl text-gray-200 max-w-xl mx-auto mb-8 leading-relaxed">
+          Where cinematic storytelling meets data-driven creativity.
         </p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          {/* Primary Button - Glowing Blue */}
-          <motion.a
-            href="#features"
-            className="relative px-8 py-3 rounded-full font-semibold text-white bg-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)] transition-all duration-300 ease-in-out"
-            whileHover={{
-              scale: 1.08,
-              boxShadow: "0px 0px 30px rgba(59,130,246,0.8)",
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Explore Our Features
-            <span className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 blur-lg transition-opacity duration-500 hover:opacity-30"></span>
-          </motion.a>
+        <motion.a
+          href="#features"
+          className="bg-white text-indigo-700 px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-indigo-500/50 hover:scale-110 transition-all duration-300"
+          whileHover={{ scale: 1.1 }}
+        >
+          Explore
+        </motion.a>
+      </motion.div>
 
-          {/* Secondary Button - Glowing Outline */}
-          <motion.a
-            href="#contact"
-            className="relative px-8 py-3 rounded-full font-semibold border-2 border-indigo-400 text-indigo-400 hover:text-white hover:bg-indigo-500 transition-all duration-300 ease-in-out shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.6)]"
-            whileHover={{
-              scale: 1.08,
-              boxShadow: "0px 0px 30px rgba(99,102,241,0.7)",
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Get in Touch
-            <span className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 opacity-0 blur-lg transition-opacity duration-500 hover:opacity-30"></span>
-          </motion.a>
-        </div>
+      {/* Scroll Indicator */}
+      <motion.div
+        className="absolute bottom-10 z-20 text-gray-300 animate-bounce"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+      >
+        ↓
       </motion.div>
     </section>
   );
-};
-
-export default Hero;
+}
