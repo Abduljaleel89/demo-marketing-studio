@@ -97,6 +97,8 @@ export default function SplashScreen({
               src={assetPath("assets/hero/hero.jpg")}
               alt="Logo"
               className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover relative z-10"
+              loading="lazy"
+              decoding="async"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1 }}

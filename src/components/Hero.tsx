@@ -15,6 +15,9 @@ export default function Hero() {
           src={assetPath("assets/hero/hero.jpg")}
           alt="Hero Background"
           className="w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           initial={{ opacity: 0, filter: "blur(12px) brightness(0.7)" }}
           animate={{ opacity: 1, filter: "blur(0px) brightness(1)" }}
           transition={{ duration: 2, ease: "easeOut" }}

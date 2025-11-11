@@ -151,6 +151,8 @@ export default function App() {
                     src={section.img}
                     alt={section.title}
                     className="rounded-2xl shadow-2xl mx-auto mb-10 w-full max-w-3xl object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
 
                   <div className="grid md:grid-cols-3 gap-6">
@@ -166,6 +168,8 @@ export default function App() {
                           src={topic.img}
                           alt={topic.name}
                           className="w-full h-48 object-cover rounded-xl mb-4"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <h3 className="text-xl font-semibold mb-2 text-indigo-600 dark:text-indigo-400">
                           {topic.name}
