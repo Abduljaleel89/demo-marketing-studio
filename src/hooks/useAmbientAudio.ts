@@ -1,35 +1,14 @@
 import { useEffect, useRef } from "react";
-
-const TARGET_GAIN = 0.22;
-
-const createWarmNoise = (context: AudioContext) => {
-  const bufferSize = context.sampleRate * 2;
-  const noiseBuffer = context.createBuffer(1, bufferSize, context.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  let lastOut = 0;
-
-  for (let i = 0; i < bufferSize; i += 1) {
-    const white = Math.random() * 2 - 1;
-    output[i] = (lastOut + 0.02 * white) / 1.02;
-    lastOut = output[i];
-    output[i] *= 0.6;
-  }
-
-  const source = context.createBufferSource();
-  source.buffer = noiseBuffer;
-  source.loop = true;
-  return source;
-};
+import { assetPath } from "../utils/assets";
 
 /**
  * Custom hook to manage ambient background audio.
- * Uses Web Audio to generate a lightweight hum so no large assets are fetched.
+ * Handles browser autoplay restrictions, fade-in/out, and
+ * listens for user interaction to start playback safely.
  */
 export function useAmbientAudio(soundOn: boolean) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const initializedRef = useRef(false);
-  const contextRef = useRef<AudioContext | null>(null);
-  const gainRef = useRef<GainNode | null>(null);
-  const noiseRef = useRef<AudioBufferSourceNode | null>(null);
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -38,28 +17,34 @@ export function useAmbientAudio(soundOn: boolean) {
       if (initializedRef.current) return;
       initializedRef.current = true;
 
-      const context = new AudioContext();
-      const masterGain = context.createGain();
-      masterGain.gain.value = 0;
-      masterGain.connect(context.destination);
+      const audio = new Audio();
+      audio.src = assetPath("assets/sounds/ambient-hum.mp3");
+      audio.loop = true;
+      audio.preload = "none";
+      audio.volume = 0;
+      audioRef.current = audio;
 
-      const filter = context.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.frequency.value = 900;
-      filter.Q.value = 0.8;
-      filter.connect(masterGain);
+      // Attempt to start playback after user interaction
+      audio
+        .play()
+        .then(() => {
+          const fadeIn = setInterval(() => {
+            if (audio.volume < 0.2) audio.volume += 0.02;
+            else clearInterval(fadeIn);
+          }, 100);
+        })
+        .catch((err) => {
+          console.warn("Audio playback failed:", err);
+        });
 
-      const noise = createWarmNoise(context);
-      noise.connect(filter);
-      noise.start();
-
-      contextRef.current = context;
-      gainRef.current = masterGain;
-      noiseRef.current = noise;
+      // Remove event listeners once initialized
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("keydown", handleUserInteraction);
     };
 
-    document.addEventListener("click", handleUserInteraction, { once: true });
-    document.addEventListener("keydown", handleUserInteraction, { once: true });
+    // Wait for a user interaction (click or key press)
+    document.addEventListener("click", handleUserInteraction);
+    document.addEventListener("keydown", handleUserInteraction);
 
     return () => {
       document.removeEventListener("click", handleUserInteraction);
@@ -67,41 +52,32 @@ export function useAmbientAudio(soundOn: boolean) {
     };
   }, []);
 
+  // Respond to sound toggle changes
   useEffect(() => {
-    const context = contextRef.current;
-    const masterGain = gainRef.current;
-    if (!context || !masterGain) return;
+    const audio = audioRef.current;
+    if (!audio) return;
 
-    const rampDuration = soundOn ? 1.8 : 1.2;
-    const target = soundOn ? TARGET_GAIN : 0;
-
-    const resume = async () => {
-      if (context.state === "suspended") {
-        try {
-          await context.resume();
-        } catch (err) {
-          console.warn("Audio context resume failed", err);
+    if (soundOn) {
+      // Resume playback with fade-in
+      audio
+        .play()
+        .then(() => {
+          const fadeIn = setInterval(() => {
+            if (audio.volume < 0.2) audio.volume += 0.02;
+            else clearInterval(fadeIn);
+          }, 100);
+        })
+        .catch(() => console.warn("Interaction required for playback."));
+    } else {
+      // Smooth fade-out before pause
+      const fadeOut = setInterval(() => {
+        if (audio.volume > 0.02) audio.volume -= 0.02;
+        else {
+          clearInterval(fadeOut);
+          audio.pause();
+          audio.currentTime = 0;
         }
-      }
-    };
-
-    resume().finally(() => {
-      masterGain.gain.cancelScheduledValues(context.currentTime);
-      masterGain.gain.linearRampToValueAtTime(target, context.currentTime + rampDuration);
-    });
+      }, 100);
+    }
   }, [soundOn]);
-
-  useEffect(() => {
-    return () => {
-      try {
-        noiseRef.current?.stop();
-      } catch (_err) {
-        // ignore stop errors during teardown
-      }
-      contextRef.current?.close?.();
-      noiseRef.current = null;
-      gainRef.current = null;
-      contextRef.current = null;
-    };
-  }, []);
 }
