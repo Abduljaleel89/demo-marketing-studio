@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { assetPath } from "../utils/assets";
 
 /**
  * Custom hook to manage ambient background audio.
@@ -16,8 +17,10 @@ export function useAmbientAudio(soundOn: boolean) {
       if (initializedRef.current) return;
       initializedRef.current = true;
 
-      const audio = new Audio("/assets/sounds/ambient-hum.mp3");
+      const audio = new Audio();
+      audio.src = assetPath("assets/sounds/ambient-hum.mp3");
       audio.loop = true;
+      audio.preload = "none";
       audio.volume = 0;
       audioRef.current = audio;
 

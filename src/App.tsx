@@ -9,6 +9,7 @@ import Modal from "./components/Modal";
 import SplashScreen from "./components/SplashScreen";
 import { Volume2, VolumeX } from "lucide-react";
 import { useAmbientAudio } from "./hooks/useAmbientAudio";
+import { assetPath } from "./utils/assets";
 
 const aiText = (topic: string) =>
   Array(8)
@@ -21,41 +22,89 @@ const sections = [
   {
     id: "features",
     title: "Our Features",
-    img: "/assets/features/feature-design.jpg",
+    img: assetPath("assets/features/feature-design.jpg"),
     topics: [
-      { name: "Creative Strategy", img: "/assets/features/feature-strategy.jpg", content: aiText("Creative Strategy") },
-      { name: "Marketing Design", img: "/assets/features/feature-marketing.jpg", content: aiText("Marketing Design") },
-      { name: "User Experience", img: "/assets/features/feature-design.jpg", content: aiText("User Experience") },
+      {
+        name: "Creative Strategy",
+        img: assetPath("assets/features/feature-strategy.jpg"),
+        content: aiText("Creative Strategy"),
+      },
+      {
+        name: "Marketing Design",
+        img: assetPath("assets/features/feature-marketing.jpg"),
+        content: aiText("Marketing Design"),
+      },
+      {
+        name: "User Experience",
+        img: assetPath("assets/features/feature-design.jpg"),
+        content: aiText("User Experience"),
+      },
     ],
   },
   {
     id: "expertise",
     title: "Our Expertise",
-    img: "/assets/expertise/expertise-content.jpg",
+    img: assetPath("assets/expertise/expertise-content.jpg"),
     topics: [
-      { name: "Identity Design", img: "/assets/expertise/expertise-identity.jpg", content: aiText("Identity Design") },
-      { name: "Content Creation", img: "/assets/expertise/expertise-content.jpg", content: aiText("Content Creation") },
-      { name: "Data Analytics", img: "/assets/expertise/expertise-analytics.jpg", content: aiText("Data Analytics") },
+      {
+        name: "Identity Design",
+        img: assetPath("assets/expertise/expertise-identity.jpg"),
+        content: aiText("Identity Design"),
+      },
+      {
+        name: "Content Creation",
+        img: assetPath("assets/expertise/expertise-content.jpg"),
+        content: aiText("Content Creation"),
+      },
+      {
+        name: "Data Analytics",
+        img: assetPath("assets/expertise/expertise-analytics.jpg"),
+        content: aiText("Data Analytics"),
+      },
     ],
   },
   {
     id: "portfolio",
     title: "Our Portfolio",
-    img: "/assets/portfolio/brandboost.jpg",
+    img: assetPath("assets/portfolio/brandboost.jpg"),
     topics: [
-      { name: "AdSphere", img: "/assets/portfolio/adsphere.jpg", content: aiText("AdSphere") },
-      { name: "BrandBoost", img: "/assets/portfolio/brandboost.jpg", content: aiText("BrandBoost") },
-      { name: "VisionFlow", img: "/assets/portfolio/visionflow.jpg", content: aiText("VisionFlow") },
+      {
+        name: "AdSphere",
+        img: assetPath("assets/portfolio/adsphere.jpg"),
+        content: aiText("AdSphere"),
+      },
+      {
+        name: "BrandBoost",
+        img: assetPath("assets/portfolio/brandboost.jpg"),
+        content: aiText("BrandBoost"),
+      },
+      {
+        name: "VisionFlow",
+        img: assetPath("assets/portfolio/visionflow.jpg"),
+        content: aiText("VisionFlow"),
+      },
     ],
   },
   {
     id: "insights",
     title: "Latest Insights",
-    img: "/assets/portfolio/visionflow.jpg",
+    img: assetPath("assets/portfolio/visionflow.jpg"),
     topics: [
-      { name: "The Future of Creative AI", img: "/assets/expertise/expertise-analytics.jpg", content: aiText("The Future of Creative AI") },
-      { name: "Designing for Data", img: "/assets/features/feature-marketing.jpg", content: aiText("Designing for Data") },
-      { name: "Marketing in Motion", img: "/assets/portfolio/adsphere.jpg", content: aiText("Marketing in Motion") },
+      {
+        name: "The Future of Creative AI",
+        img: assetPath("assets/expertise/expertise-analytics.jpg"),
+        content: aiText("The Future of Creative AI"),
+      },
+      {
+        name: "Designing for Data",
+        img: assetPath("assets/features/feature-marketing.jpg"),
+        content: aiText("Designing for Data"),
+      },
+      {
+        name: "Marketing in Motion",
+        img: assetPath("assets/portfolio/adsphere.jpg"),
+        content: aiText("Marketing in Motion"),
+      },
     ],
   },
 ];
@@ -63,12 +112,16 @@ const sections = [
 export default function App() {
   const [showMain, setShowMain] = useState(false);
   const [modal, setModal] = useState<any>(null);
-  const [soundOn, setSoundOn] = useState(localStorage.getItem("soundOn") !== "false");
+  const [soundOn, setSoundOn] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.localStorage.getItem("soundOn") !== "false";
+  });
 
   useAmbientAudio(soundOn);
 
   useEffect(() => {
-    localStorage.setItem("soundOn", String(soundOn));
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("soundOn", String(soundOn));
   }, [soundOn]);
 
   return (

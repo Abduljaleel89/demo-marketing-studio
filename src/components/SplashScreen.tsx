@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import type { Engine } from "tsparticles-engine";
+import { assetPath } from "../utils/assets";
 
 export default function SplashScreen({
   onGetStarted,
@@ -93,7 +94,7 @@ export default function SplashScreen({
           {/* logo + circular timer */}
           <div className="relative mb-6">
             <motion.img
-              src="/assets/hero/hero.jpg"
+              src={assetPath("assets/hero/hero.jpg")}
               alt="Logo"
               className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover relative z-10"
               initial={{ opacity: 0, scale: 0.8 }}

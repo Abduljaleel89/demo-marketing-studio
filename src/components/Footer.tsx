@@ -28,7 +28,7 @@ export default function Footer() {
         </a>
 
         <div className="mt-10 text-sm text-gray-500">
-          © {new Date().getFullYear()} Demo Marketing Studio. All rights
+          {"\u00A9"} {new Date().getFullYear()} Demo Marketing Studio. All rights
           reserved.
         </div>
       </motion.div>

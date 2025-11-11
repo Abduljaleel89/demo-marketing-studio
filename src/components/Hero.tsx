@@ -1,5 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import { assetPath } from "../utils/assets";
 
 export default function Hero() {
   return (
@@ -7,10 +9,10 @@ export default function Hero() {
       id="hero"
       className="relative h-screen flex flex-col items-center justify-center overflow-hidden text-white text-center"
     >
-      {/* Background Image (Fades from blur → crisp) */}
+      {/* Background Image (Fades from blur to crisp) */}
       <div className="absolute inset-0 z-0">
         <motion.img
-          src="/assets/hero/hero.jpg"
+          src={assetPath("assets/hero/hero.jpg")}
           alt="Hero Background"
           className="w-full h-full object-cover"
           initial={{ opacity: 0, filter: "blur(12px) brightness(0.7)" }}
@@ -51,9 +53,11 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
+        aria-hidden="true"
       >
-        ↓
+        <ChevronDown className="w-6 h-6" />
       </motion.div>
+      <span className="sr-only">Scroll down</span>
     </section>
   );
 }

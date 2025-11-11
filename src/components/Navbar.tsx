@@ -13,9 +13,10 @@ const links = [
 export default function Navbar() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("");
-  const [darkMode, setDarkMode] = useState(
-    document.documentElement.classList.contains("dark")
-  );
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof document === "undefined") return false;
+    return document.documentElement.classList.contains("dark");
+  });
   const [navWidth, setNavWidth] = useState<number | null>(null);
   const [navOffset, setNavOffset] = useState<number>(0);
 
@@ -67,6 +68,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
     if (darkMode) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
   }, [darkMode]);
